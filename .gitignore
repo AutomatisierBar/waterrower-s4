@@ -6,3 +6,5 @@
 /grpc-backend/src/proto/*.js
 /client/proto/*.py
 /grpc-backend/.env
+/.idea/
+/client/proto/__pycache__/
