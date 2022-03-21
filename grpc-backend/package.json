@@ -7,7 +7,7 @@
     "start": "ts-node src/index.ts",
     "generate": "npm run prisma-generate && npm run proto-generate",
     "prisma-generate": "rm -rf prisma && mkdir -p prisma && cp -r ../db/prisma/schema.prisma prisma/schema.prisma && npx prisma generate && rm -r prisma",
-    "proto-generate": "rm -rf src/proto && mkdir src/proto && touch src/proto/.gitkeep && grpc_tools_node_protoc -I ../proto --js_out=import_style=commonjs,binary:./src/proto/ --grpc_out=grpc_js:./src/proto ../proto/trainings.proto && grpc_tools_node_protoc -I ../proto --ts_out=./src/proto/ --plugin=protoc-gen-grpc=./node_modules/.bin/protoc-gen-ts ../proto/trainings.proto",
+    "proto-generate": "rm -rf src/proto && mkdir src/proto && touch src/proto/.gitkeep && grpc_tools_node_protoc -I ../proto --js_out=import_style=commonjs,binary:./src/proto/ --grpc_out=grpc_js:./src/proto ../proto/trainings.proto && grpc_tools_node_protoc -I ../proto --ts_out=./src/proto/ --plugin=protoc-gen-grpc=./node_modules/.bin/protoc-gen-ts ../proto/trainings.proto && sed -i 's|import \\* as grpc from \"grpc\"|import \\* as grpc from \"@grpc/grpc-js\"|g' src/proto/trainings_grpc_pb.d.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
