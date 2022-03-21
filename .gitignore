@@ -1,0 +1,8 @@
+/grpc-backend/node_modules/
+/venv/
+/db/prisma/node_modules/
+/db/prisma/migrations/
+/grpc-backend/src/proto/*.d.ts
+/grpc-backend/src/proto/*.js
+/client/proto/*.py
+/grpc-backend/.env
