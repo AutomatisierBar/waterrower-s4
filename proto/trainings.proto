@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package trainings;
+
+import "google/protobuf/empty.proto";
+
+message Training {
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+service Trainings {
+   rpc GetTraining(google.protobuf.Empty) returns (Training) {}
+}
+
