@@ -1,10 +1,8 @@
-import * as grpc from '@grpc/grpc-js';
 import { sendUnaryData, ServerUnaryCall, Server, ServerCredentials } from '@grpc/grpc-js';
-import { Training } from './proto/trainings_pb'
+import services from './proto/trainings_grpc_pb';
 import { Empty } from 'google-protobuf/google/protobuf/empty_pb';
-import { ITrainingsServer, TrainingsService } from './proto/trainings_grpc_pb';
-
-export class TrainingsServer implements ITrainingsServer {
+import { Training } from './proto/trainings_pb';
+export class GrpcProtobufferServer {
 
     getTraining(call: ServerUnaryCall<Empty, Training>, callback: sendUnaryData<Training>) {
         const training = new Training();
@@ -15,11 +13,10 @@ export class TrainingsServer implements ITrainingsServer {
     }
 
     public start() {
-        const server = new grpc.Server();
-        server.addService(TrainingsService, {getAll: this.getAllTrainings});
+        const server = new Server();
+        server.addService(services.TrainingsService, {getTraining: this.getTraining});
         server.bindAsync('0.0.0.0:50051', ServerCredentials.createInsecure(), () => {
             server.start();        
         });
-        this.server = server;
     }
 }
