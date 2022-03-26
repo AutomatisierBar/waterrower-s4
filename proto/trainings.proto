@@ -13,4 +13,3 @@ message Training {
 service Trainings {
    rpc GetTraining(google.protobuf.Empty) returns (Training) {}
 }
-

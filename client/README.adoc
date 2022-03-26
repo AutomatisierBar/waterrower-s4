@@ -1,0 +1,6 @@
+= README
+
+== generate proto client
+
+python -m grpc_tools.protoc -I ../proto --python_out=./proto --grpc_python_out=./proto ../proto/trainings.proto
+sed -i 's|import trainings_pb2|from . import trainings_pb2|g' proto/trainings_pb2_grpc.py

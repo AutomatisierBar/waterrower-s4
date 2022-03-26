@@ -1,12 +1,9 @@
-import { credentials } from "@grpc/grpc-js";
 import express from "express"
 import { DatabaseClient } from "./database_client";
-import { TrainingsServer } from "./grpc_protobuffer_server";
-import { TrainingsClient } from "./proto/trainings_grpc_pb";
-import { Empty } from 'google-protobuf/google/protobuf/empty_pb';
+import { GrpcProtobufferServer } from "./grpc_protobuffer_server";
 
 const app = express()
-const grpc_server = new TrainingsServer();
+const grpc_server = new GrpcProtobufferServer();
 grpc_server.start();
 const port = 9999;
 app.set('json spaces', 2)
