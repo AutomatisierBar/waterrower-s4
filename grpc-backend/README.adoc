@@ -1,0 +1,45 @@
+= Grpc-backend
+
+=== Description
+
+=== Changelog
+
+=== Troubleshooting
+
+===== GNU-SED Mac OS
+
+----
+sed: 1: "src/proto/trainings_grp ...": bad flag in substitute command: 'a'
+----
+
+
+Check which version of sed is used when you run the `sed` command.
+
+The version that ships with Mac OS X is `/usr/bin/sed`
+----
+which sed
+----
+Install gnu-sed using Homebrew
+----
+brew install gnu-sed
+----
+Check if PATH is set up correctly
+----
+$ brew info gnu-sed
+gnu-sed: stable 4.8 (bottled)
+GNU implementation of the famous stream editor
+...
+==> Caveats
+GNU "sed" has been installed as "gsed".
+If you need to use it as "sed", you can add a "gnubin" directory
+to your PATH from your bashrc like:
+
+    PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"
+...
+----
+
+Verify which version of sed is used when you run the `sed` command
+
+OK:  `/usr/local/opt/gnu-sed/libexec/gnubin/sed`
+
+BAD:` `/usr/bin/sed` or `/usr/local/bin/gsed`
