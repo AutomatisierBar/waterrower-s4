@@ -87,6 +87,13 @@ export class GrpcProtobufferServer {
 // Add also a default error handling to avoid hanging grpc calls
 function bindCallback(toObject: any, methodName: string){
     return function(call: any, callback: any){
-        toObject[methodName](call, callback)      
+        try {
+            toObject[methodName](call, callback)
+        } catch(e) {
+            callback({
+                code: status.UNKNOWN,
+                message: 'Bad request'
+            }, null);
+        }        
     }
 }
