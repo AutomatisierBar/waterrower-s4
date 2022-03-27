@@ -6,9 +6,11 @@ import { DatabaseClient } from './database_client';
 
 export class GrpcProtobufferServer {
 
-    private databaseClient!: DatabaseClient;
+    private server: Server
+    private databaseClient: DatabaseClient 
 
-    public GrpcProtobufferServer(databaseClient: DatabaseClient) {
+    constructor(databaseClient: DatabaseClient) {
+        this.server = new Server()
         this.databaseClient = databaseClient
     }
 
@@ -16,15 +18,15 @@ export class GrpcProtobufferServer {
         const toSaveTraining = this.convertToPrismaTraining(call.request)
         this.databaseClient.saveTraining(toSaveTraining)
             .then((prismaTraining: PrismaTraining) => {
-                const storedTraining = this.convertToProtoTraining(prismaTraining);
-                callback(null, storedTraining);       
+                const storedTraining = this.convertToProtoTraining(prismaTraining)
+                callback(null, storedTraining)
             })
             .catch(err => {
                 console.error('Unable to save training' + toSaveTraining, err)
                 callback({
                     code: status.INTERNAL,
                     message: 'Unable to save training' + toSaveTraining
-                }, null);
+                }, null)
             })
     }
 
@@ -33,11 +35,11 @@ export class GrpcProtobufferServer {
         this.databaseClient.getTraining(id)
             .then((prismaTraining: PrismaTraining|null) => {
                 if(prismaTraining != null) {
-                    const training = this.convertToProtoTraining(prismaTraining);
-                    callback(null, training);
+                    const training = this.convertToProtoTraining(prismaTraining)
+                    callback(null, training)
                 } else {
                     callback(null, null);
-                }        
+                }
             })
             .catch(err => {
                 console.error('Unable to load training from database for id: ' + id, err)
@@ -46,17 +48,17 @@ export class GrpcProtobufferServer {
                     code: status.INTERNAL,
                     message: 'Unable to load training from database for id: ' + id
                 }, null);
-            })
+            })      
     }
 
-    public start() {
-        const server = new Server();
-        server.addService(services.TrainingsService, {
-            getTraining: this.getTraining,
-            saveTraining: this.saveTraining
+    public start() {        
+        this.server.addService(services.TrainingsService, {
+            getTraining: bindCallback(this, "getTraining"),
+            saveTraining: bindCallback(this, "saveTraining")
         });
-        server.bindAsync('0.0.0.0:50051', ServerCredentials.createInsecure(), () => {
-            server.start();        
+        this.server.bindAsync('0.0.0.0:50051', ServerCredentials.createInsecure(), () => {
+            this.server.start(); 
+            console.log("grpc-server is running")       
         });
     }
 
@@ -74,5 +76,17 @@ export class GrpcProtobufferServer {
             name: protoTraining.getName(),
             description: protoTraining.getDescription()
         }
+    }
+}
+
+// use this function to bind the callback 
+// to the method calls of a specifc object instance.
+// Without this trick the methods would be called outside of instance context
+// which resolves all variables referenced by "this." to undefined.
+// 
+// Add also a default error handling to avoid hanging grpc calls
+function bindCallback(toObject: any, methodName: string){
+    return function(call: any, callback: any){
+        toObject[methodName](call, callback)      
     }
 }
