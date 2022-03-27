@@ -1,9 +1,9 @@
 import { sendUnaryData, ServerUnaryCall, Server, ServerCredentials, status} from '@grpc/grpc-js';
 import services from './proto/trainings_grpc_pb';
-import { Empty } from 'google-protobuf/google/protobuf/empty_pb';
-import { Training as ProtoTraining } from './proto/trainings_pb'
+import { Training as ProtoTraining, GetTrainingById } from './proto/trainings_pb'
 import { Training as PrismaTraining } from '@prisma/client';
 import { DatabaseClient } from './database_client';
+
 export class GrpcProtobufferServer {
 
     private databaseClient!: DatabaseClient;
@@ -12,8 +12,8 @@ export class GrpcProtobufferServer {
         this.databaseClient = databaseClient
     }
 
-    getTraining(call: ServerUnaryCall<Empty, ProtoTraining>, callback: sendUnaryData<ProtoTraining>) {
-        const id = 1
+    getTraining(call: ServerUnaryCall<GetTrainingById, ProtoTraining>, callback: sendUnaryData<ProtoTraining>) {
+        const id = call.request.getId()
         this.databaseClient.getTraining(id)
             .then((prismaTraining: PrismaTraining|null) => {
                 if(prismaTraining != null) {
