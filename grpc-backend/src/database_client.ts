@@ -5,8 +5,8 @@ export class DatabaseClient {
 
     public DatabaseClient() {}
 
-    public saveTraining(training: Training): void{
-        this.prisma.training.create({
+    public async saveTraining(training: Training): Promise<Training> {
+        return await this.prisma.training.create({
             data: training
         })
     }

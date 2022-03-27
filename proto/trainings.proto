@@ -14,4 +14,6 @@ message GetTrainingById {
 
 service Trainings {
    rpc GetTraining(GetTrainingById) returns (Training) {}
+
+   rpc SaveTraining(Training) returns (Training) {}
 }

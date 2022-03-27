@@ -12,6 +12,22 @@ export class GrpcProtobufferServer {
         this.databaseClient = databaseClient
     }
 
+    saveTraining(call: ServerUnaryCall<ProtoTraining, ProtoTraining>, callback: sendUnaryData<ProtoTraining>) {
+        const toSaveTraining = this.convertToPrismaTraining(call.request)
+        this.databaseClient.saveTraining(toSaveTraining)
+            .then((prismaTraining: PrismaTraining) => {
+                const storedTraining = this.convertToProtoTraining(prismaTraining);
+                callback(null, storedTraining);       
+            })
+            .catch(err => {
+                console.error('Unable to save training' + toSaveTraining, err)
+                callback({
+                    code: status.INTERNAL,
+                    message: 'Unable to save training' + toSaveTraining
+                }, null);
+            })
+    }
+
     getTraining(call: ServerUnaryCall<GetTrainingById, ProtoTraining>, callback: sendUnaryData<ProtoTraining>) {
         const id = call.request.getId()
         this.databaseClient.getTraining(id)
@@ -35,7 +51,10 @@ export class GrpcProtobufferServer {
 
     public start() {
         const server = new Server();
-        server.addService(services.TrainingsService, {getTraining: this.getTraining});
+        server.addService(services.TrainingsService, {
+            getTraining: this.getTraining,
+            saveTraining: this.saveTraining
+        });
         server.bindAsync('0.0.0.0:50051', ServerCredentials.createInsecure(), () => {
             server.start();        
         });
@@ -47,5 +66,13 @@ export class GrpcProtobufferServer {
         training.setName(prismaTraining.name)
         training.setDescription(prismaTraining.description != null ? prismaTraining.description : '')
         return training;
+    }
+
+    private convertToPrismaTraining(protoTraining: ProtoTraining): PrismaTraining {
+        return {
+            id: protoTraining.getId(),
+            name: protoTraining.getName(),
+            description: protoTraining.getDescription()
+        }
     }
 }
