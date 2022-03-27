@@ -1,15 +1,23 @@
-import { PrismaClient, PrismaPromise, User } from '@prisma/client'
+import { PrismaClient, PrismaPromise, Training } from '@prisma/client'
 
 export class DatabaseClient {
     private prisma = new PrismaClient();
 
     public DatabaseClient() {}
 
-    public getAllUsers(): PrismaPromise<User[]> {
-        return this.prisma.user.findMany()
+    public saveTraining(training: Training): void{
+        this.prisma.training.create({
+            data: training
+        })
     }
 
-    public getAllUsersWithFullfilledLanguages(language_ids: number[]): PrismaPromise<User[]> {        
-        return this.prisma.$queryRaw`SELECT * FROM "User" WHERE ${language_ids} @> "languages_by_id"`    
+    public async getTraining(id: number): Promise<Training | null>{
+        return await this.prisma.training.findUnique(
+            { 
+                where: {
+                    id: id
+                }
+            }
+        )
     }
 }
