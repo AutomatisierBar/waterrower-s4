@@ -7,7 +7,7 @@ grpc_tools_node_protoc := $(npm_bin)/grpc_tools_node_protoc
 grpc_tools_node_protoc_plugin := $(npm_bin)/grpc_tools_node_protoc_plugin
 protoc-gen-ts := $(npm_bin)/protoc-gen-ts
 
-.PHONY: npm_install generate run clean
+.PHONY: npm_install generate run clean start_database
 
 npm_install:
 	cd $(proto_server_src) && \
@@ -39,6 +39,10 @@ generate_server: npm_install
  		./proto/trainings.proto
 
 generate: generate_client generate_server
+
+start_database:
+	cd devOps/docker && \
+	docker-compose up -d
 
 run:
 	cd $(proto_server_src) && \
