@@ -7,7 +7,7 @@
     "start": "ts-node src/index.ts",
     "generate": "npm run prisma-generate && npm run proto-generate",
     "prisma-generate": "npx prisma generate --schema=db/prisma/schema.prisma",
-    "proto-generate": "rm -rf src/proto && mkdir src/proto && touch src/proto/.gitkeep && grpc_tools_node_protoc -I ../proto --js_out=import_style=commonjs,binary:./src/proto/ --grpc_out=grpc_js:./src/proto ../proto/trainings.proto && grpc_tools_node_protoc -I ../proto --ts_out=./src/proto/ --plugin=protoc-gen-grpc=./node_modules/.bin/protoc-gen-ts ../proto/trainings.proto && sed -i 's|import \\* as grpc from \"grpc\"|import \\* as grpc from \"@grpc/grpc-js\"|g' src/proto/trainings_grpc_pb.d.ts",
+    "proto-generate": "rm -rf src/proto && mkdir src/proto && touch src/proto/.gitkeep && npx grpc_tools_node_protoc -I ../proto --js_out=import_style=commonjs,binary:./src/proto/ --grpc_out=grpc_js:./src/proto ../proto/trainings.proto && npx grpc_tools_node_protoc -I ../proto --ts_out=./src/proto/ --plugin=protoc-gen-grpc=./node_modules/.bin/protoc-gen-ts ../proto/trainings.proto && sed -i 's|import \\* as grpc from \"grpc\"|import \\* as grpc from \"@grpc/grpc-js\"|g' src/proto/trainings_grpc_pb.d.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -26,6 +26,7 @@
     "@types/google-protobuf": "^3.15.5",
     "@types/node": "^17.0.21",
     "grpc_tools_node_protoc_ts": "^5.3.2",
+    "grpc-tools": "^1.11.2",
     "prisma": "^3.10.0",
     "ts-node": "^10.7.0",
     "tslint": "^6.1.3",
